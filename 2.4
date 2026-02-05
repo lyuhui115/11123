@@ -1,0 +1,43 @@
+# 1. 定义原始杂乱情报
+raw_intel = " Agent:007_Bond; Coords:(40,74); Items:gun,money,gun; Mission:2025-RESCUE-X "
+
+# 2. 第一步：去除所有干扰空格
+# strip() 去掉首尾空格，replace(" ", "") 去掉中间所有干扰空格
+clean_intel = raw_intel.strip().replace(" ", "")
+print("去除空格后的情报：", clean_intel)
+
+# 3. 拆分各个字段（按分号分割，过滤空字符串）
+fields = [field for field in clean_intel.split(";") if field]
+print("拆分后的字段：", fields)
+# 4. 处理每个字段并提取信息
+# 4.1 提取特工编号和姓名
+agent_field = fields[0]  # "Agent:007_Bond"
+agent = agent_field.split(":")[1]  # 按冒号分割，取冒号后内容
+# 4.2 提取坐标并转为元组（锁定坐标）
+coord_field = fields[1]  # "Coords:(40,74)"
+# 截取括号内的内容：从"("的下一个字符到")"的前一个字符
+coord_str = coord_field[coord_field.find("(")+1 : coord_field.find(")")]
+# 分割成数字字符串，转成整数后组成元组
+coords = tuple(int(num) for num in coord_str.split(","))
+# 4.3 提取装备并去重（利用Set）
+item_field = fields[2]  # "Items:gun,money,gun"
+items_list = item_field.split(":")[1].split(",")  # 拆分成列表：['gun','money','gun']
+items_unique = list(set(items_list))  # 转集合去重，再转回列表（保持可读性）
+# 4.4 截取核心任务代号（利用Slicing）
+mission_field = fields[3]  # "Mission:2025-RESCUE-X"
+mission_full = mission_field.split(":")[1]  # "2025-RESCUE-X"
+# 切片方式1：按分隔符拆分取核心（推荐，更通用）
+mission_core = mission_full.split("-")[1]
+# 切片方式2：直接索引切片（适合固定格式）
+# mission_core = mission_full[5:-2]  # 从第5位取到倒数第2位，结果也是RESCUE
+# 5. 归档到字典档案中
+intel_dict = {
+    "Agent": agent,
+    "Coordinates": coords,
+    "Items": items_unique,
+    "Mission_Code": mission_core
+}
+# 6. 打印最终整理后的档案
+print("\n=== 特工情报档案 ===")
+for key, value in intel_dict.items():
+    print(f"{key}: {value}")
