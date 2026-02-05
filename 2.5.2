@@ -1,0 +1,43 @@
+# 一行代码完成：遍历1-10，计算每个数的平方
+square_list = [x**2 for x in range(1, 11)]
+print("1-10的平方数列表：", square_list)
+# 原始名字列表
+names = ["张三", "李四", "王五"]
+# map + lambda：给每个名字添加"QG_"前缀
+new_names = list(map(lambda name: f"QG_{name}", names))
+print("加前缀后的名字列表：", new_names)
+# 1. 定义原始能源核心数据
+raw_data = ["85", "92", "ERROR", "105", "78", "WARNING", "99", "120"]
+
+# 2. 步骤1：过滤非数字项，转为数值类型（跳过ERROR/WARNING等）
+# 用列表推导式+异常捕获，尝试转浮点数，失败则跳过
+valid_numbers = []
+for item in raw_data:
+    try:
+        num = float(item)  # 尝试转为浮点数
+        valid_numbers.append(num)
+    except ValueError:
+        # 非数字项，打印提示并跳过
+        print(f"跳过非数字项：{item}")
+
+# 3. 步骤2：筛选出≥80的数值
+filtered_numbers = [num for num in valid_numbers if num >= 80]
+print(f"\n筛选后≥80的有效数值：{filtered_numbers}")
+
+# 4. 步骤3：归一化处理（以有效数据的最大值为分母，归一到0-1区间）
+# 处理空数据的边界情况，避免除以0
+if not filtered_numbers:
+    print("无有效能源核心数据！")
+else:
+    max_value = max(filtered_numbers)  # 取有效数据的最大值
+    normalized_data = [num / max_value for num in filtered_numbers]  # 归一化
+    print(f"归一化后的数据：{[round(n, 2) for n in normalized_data]}")  # 保留2位小数，便于查看
+
+    # 5. 步骤4：判断状态并输出
+    print("\n=== 能源核心状态报告 ===")
+    for original, normalized in zip(filtered_numbers, normalized_data):
+        if normalized > 1.0:
+            status = "核心过载"
+        else:
+            status = "运转正常"
+        print(f"原始值：{original} → 归一化值：{round(normalized, 2)} → {status}")
